@@ -337,9 +337,14 @@ public function <methodName>()
 	 *
 	 * @param string $attributeVisibility
 	 */
+<<<<<<< HEAD
 	public function setAttributeVisibility($attributeVisibility)
 	{
 		if (!array_search($attributeVisibility, array("private", "protected", "public")))
+=======
+	public function setAttributeVisibility($attributeVisibility) {
+		if (!in_array($attributeVisibility, array("private", "protected", "public")))
+>>>>>>> Changed array_search to in_array
 			throw new \InvalidArgumentException("$attributeVisibility is not a valid attribute visibility");
 
 		$this->_attributeVisibility = $attributeVisibility;
