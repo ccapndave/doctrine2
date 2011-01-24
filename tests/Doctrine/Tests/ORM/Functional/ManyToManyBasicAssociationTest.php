@@ -3,7 +3,8 @@
 namespace Doctrine\Tests\ORM\Functional;
 
 use Doctrine\Tests\Models\CMS\CmsUser,
-    Doctrine\Tests\Models\CMS\CmsGroup;
+    Doctrine\Tests\Models\CMS\CmsGroup,
+    Doctrine\Common\Collections\ArrayCollection;
 
 require_once __DIR__ . '/../../TestInit.php';
 
@@ -298,5 +299,47 @@ class ManyToManyBasicAssociationTest extends \Doctrine\Tests\OrmFunctionalTestCa
         $this->assertNotNull($user->getId(), "User 'gblanco' should have an ID assigned after the persist()/flush() operation.");
 
         return $user;
+    }
+
+    /**
+     * @group DDC-980
+     */
+    public function testUpdateDeleteSizeSubselectQueries()
+    {
+        $this->_em->createQuery("DELETE Doctrine\Tests\Models\CMS\CmsUser u WHERE SIZE(u.groups) = 10")->execute();
+        $this->_em->createQuery("UPDATE Doctrine\Tests\Models\CMS\CmsUser u SET u.status = 'inactive' WHERE SIZE(u.groups) = 10")->execute();
+    }
+
+    /**
+     * @group DDC-978
+     */
+    public function testClearAndResetCollection()
+    {
+        $user = $this->addCmsUserGblancoWithGroups(2);
+        $group1 = new CmsGroup;
+        $group1->name = 'Developers_New1';
+        $group2 = new CmsGroup;
+        $group2->name = 'Developers_New2';
+
+        $this->_em->persist($group1);
+        $this->_em->persist($group2);
+        $this->_em->flush();
+        $this->_em->clear();
+
+        $user = $this->_em->find(get_class($user), $user->id);
+
+        $coll = new ArrayCollection(array($group1, $group2));
+        $user->groups = $coll;
+        $this->_em->flush();
+        $this->assertInstanceOf('Doctrine\ORM\PersistentCollection', $user->groups,
+            "UnitOfWork should have replaced ArrayCollection with PersistentCollection.");
+        $this->_em->flush();
+
+        $this->_em->clear();
+
+        $user = $this->_em->find(get_class($user), $user->id);
+        $this->assertEquals(2, count($user->groups));
+        $this->assertEquals('Developers_New1', $user->groups[0]->name);
+        $this->assertEquals('Developers_New2', $user->groups[1]->name);
     }
 }

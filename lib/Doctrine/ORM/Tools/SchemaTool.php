@@ -179,7 +179,7 @@ class SchemaTool
                     $this->_gatherColumn($class, $idMapping, $table);
                     $columnName = $class->getQuotedColumnName($class->identifier[0], $this->_platform);
                     // TODO: This seems rather hackish, can we optimize it?
-                    $table->getColumn($class->identifier[0])->setAutoincrement(false);
+                    $table->getColumn($columnName)->setAutoincrement(false);
 
                     $pkColumns[] = $columnName;
 
@@ -509,7 +509,7 @@ class SchemaTool
                 if (isset($joinColumn['nullable'])) {
                     $columnOptions['notnull'] = !$joinColumn['nullable'];
                 }
-                if ($fieldMapping['type'] == "string") {
+                if ($fieldMapping['type'] == "string" && isset($fieldMapping['length'])) {
                     $columnOptions['length'] = $fieldMapping['length'];
                 } else if ($fieldMapping['type'] == "decimal") {
                     $columnOptions['scale'] = $fieldMapping['scale'];
