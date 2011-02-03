@@ -339,7 +339,7 @@ public function <methodName>()
 		$this->_backupExisting = $bool;
 	}
 
-    /**
+	/**
 	 * Set what visibility to use when generating attributes
 	 *
 	 * @param string $attributeVisibility
