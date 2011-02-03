@@ -331,20 +331,21 @@ public function <methodName>()
     {
         $this->_generateEntityStubMethods = $bool;
     }
+    
+	/**
+	 * Should an existing entity be backed up if it already exists?
+	 */
+	public function setBackupExisting($bool) {
+		$this->_backupExisting = $bool;
+	}
 
-    /**     * Should an existing entity be backed up if it already exists?     */    public function setBackupExisting($bool)    {        $this->_backupExisting = $bool;    }	/**
+    /**
 	 * Set what visibility to use when generating attributes
 	 *
 	 * @param string $attributeVisibility
 	 */
-<<<<<<< HEAD
-	public function setAttributeVisibility($attributeVisibility)
-	{
-		if (!array_search($attributeVisibility, array("private", "protected", "public")))
-=======
 	public function setAttributeVisibility($attributeVisibility) {
 		if (!in_array($attributeVisibility, array("private", "protected", "public")))
->>>>>>> Changed array_search to in_array
 			throw new \InvalidArgumentException("$attributeVisibility is not a valid attribute visibility");
 
 		$this->_attributeVisibility = $attributeVisibility;
